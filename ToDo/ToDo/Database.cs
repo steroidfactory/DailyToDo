@@ -15,6 +15,7 @@ namespace ToDo
         private string uid;
         private string password;
         private string table;
+        private string tableConfirmedBy;
 
 
 
@@ -37,6 +38,7 @@ namespace ToDo
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";" + "Convert Zero Datetime=True;";
             connection = new MySqlConnection(connectionString);
             table= "diskoperationlog";
+            tableConfirmedBy = "customfields";
 
         }
 
@@ -175,7 +177,92 @@ namespace ToDo
             }
         }
 
+        public string SelectConfirmedBy(string OperationId)
+        {
+            string query = "SELECT * FROM " + tableConfirmedBy + " WHERE DiskOperationLogId=" + "'" + OperationId + "'" + ";";
+            //int countNum = Count();
+            //Create a list to store the result
+            string Name = "";
 
+            //Open connection
+            if (OpenConnection() == true)
+            {
+
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                // MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list
+                using (MySqlDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        Name = dataReader["User1"].ToString();
+                        //Console.WriteLine(dataReader["Index_ID"].ToString() + dataReader["QT"] + dataReader["OrderNumber"]
+                        //+ dataReader["ID"] + dataReader["TrackingNumber"] + dataReader["TimeIn"] );
+                    }
+                    //close Data Reader
+                    dataReader.Close();
+
+                    //close Connection
+                    CloseConnection();
+                }
+                //return list to be displayed
+                return Name;
+            }
+            else
+            {
+                return Name;
+            }
+        }
+
+        //Select statement
+        public List<string>[] selectOperationId(string barcode)
+        {
+            string query = "SELECT * FROM " + table + " WHERE CustomComputerId=" + "'" + barcode + "'" + ";";
+            //int countNum = Count();
+            //Create a list to store the result
+            List<string>[] list = new List<string>[3];
+            //for (int i = 0; i<=4; i++)
+            //{
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            //}
+
+            //Open connection
+            if (OpenConnection() == true)
+            {
+
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                // MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list
+                using (MySqlDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        list[0].Add(dataReader["Id"] + "");
+                        //Console.WriteLine(dataReader["Index_ID"].ToString() + dataReader["QT"] + dataReader["OrderNumber"]
+                        //+ dataReader["ID"] + dataReader["TrackingNumber"] + dataReader["TimeIn"] );
+                    }
+                    //close Data Reader
+                    dataReader.Close();
+
+                    //close Connection
+                    CloseConnection();
+                }
+                //return list to be displayed
+                return list;
+            }
+            else
+            {
+                return list;
+            }
+        }
     }
 }
 

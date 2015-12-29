@@ -22,13 +22,14 @@ namespace ToDo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            checkDB("5861292");
+            checkDB("5868616");
         }
         
         private void checkDB(string barcode)
         {
             DateTime timeStart = new DateTime();
             DateTime timeEnd = new DateTime();
+            string Name = "";
             if (dbWipedrive.Count(barcode) > 0)
             {
                 Console.WriteLine("Started By: " + dbWipedrive.Select(barcode)[0][0]);
@@ -40,7 +41,16 @@ namespace ToDo
                 }
                 else
                 {
-                    MessageBox.Show("Wiping");
+                    Name = dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(barcode)[0][0]);
+                    if (Name == "")
+                    {
+                        MessageBox.Show("Awaiting Confirmation");
+                    }
+                    else
+                    {
+                        MessageBox.Show("Confirmed by: " + Name);
+                    }
+                    
                 }
             }
             else
