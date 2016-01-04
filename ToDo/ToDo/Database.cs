@@ -217,6 +217,46 @@ namespace ToDo
             }
         }
 
+        public string SelectLoad(string queryCondition)
+        {
+            string query = "SELECT * FROM " + table + " WHERE " + queryCondition + ";";
+            //int countNum = Count();
+            //Create a list to store the result
+            string Name = "";
+
+            //Open connection
+            if (OpenConnection() == true)
+            {
+
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                // MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list
+                using (MySqlDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                       // Name = dataReader["User1"].ToString();
+                        //Console.WriteLine(dataReader["Index_ID"].ToString() + dataReader["QT"] + dataReader["OrderNumber"]
+                        //+ dataReader["ID"] + dataReader["TrackingNumber"] + dataReader["TimeIn"] );
+                    }
+                    //close Data Reader
+                    dataReader.Close();
+
+                    //close Connection
+                    CloseConnection();
+                }
+                //return list to be displayed
+                return Name;
+            }
+            else
+            {
+                return Name;
+            }
+        }
+
         //Select statement
         public List<string>[] selectOperationId(string barcode)
         {

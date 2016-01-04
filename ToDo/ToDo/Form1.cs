@@ -8,11 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.OleDb;
+using System.Threading;
 
 namespace ToDo
 {
     public partial class Form1 : Form
     {
+        delegate void SetDataTableCallback(DataTable dt);
+        int loopCounter = new int();
         Database dbWipedrive = new Database();
         public Form1()
         {
@@ -24,17 +27,17 @@ namespace ToDo
         {
             checkDB("5861292");
         }
-        
 
 
-        private void checkDB(string barcode)
+
+
+        private string checkDB(string barcode)
         {
             DateTime timeStart = new DateTime();
             DateTime timeEnd = new DateTime();
             string Name = "";
             if (dbWipedrive.Count(barcode) > 0)
             {
-                Console.WriteLine("Started By: " + dbWipedrive.Select(barcode)[0][0]);
                 timeStart = DateTime.Parse(dbWipedrive.Select(barcode)[1][0]);
                 timeEnd = DateTime.Parse(dbWipedrive.Select(barcode)[2][0]);
 
@@ -44,24 +47,24 @@ namespace ToDo
                     Name = dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(barcode)[0][0]);
                     if (Name == "")
                     {
-                        MessageBox.Show("Awaiting Confirmation");
+                        return "Awaiting Confirmation";
                     }
                     else
                     {
-                        MessageBox.Show("Confirmed by: " + Name);
+                        return "Confirmed";
                     }
                 }
 
                 //Wiping
                 else
                 {
-                    MessageBox.Show("Wiping");
+                    return "Wiping";
 
                 }
             }
             else
             {
-                MessageBox.Show("Not started");
+                return "Not started";
             }
         }
 
@@ -92,11 +95,11 @@ namespace ToDo
             return sb.ToString();
         }
 
-        private DataSet ReadExcelFile()
+        private DataTable ReadExcelFile()
         {
-            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
 
-            string connectionString = GetConnectionString("C:\\excel.xlsb");
+            string connectionString = GetConnectionString("C:\\Book1.xlsx");
 
             using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
@@ -115,35 +118,91 @@ namespace ToDo
                     if (sheetName.Contains("Lot Handling"))
                         continue;
 
-                    if (sheetName.EndsWith("$"))
-                    Console.WriteLine();
-
                     //if (!sheetName.EndsWith("$"))
                     //continue;
 
                     // Get all rows from the Sheet
                     cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
 
-                    DataTable dt = new DataTable();
                     dt.TableName = sheetName;
 
                     OleDbDataAdapter da = new OleDbDataAdapter(cmd);
                     da.Fill(dt);
-                    ds.Tables.Add(dt);
-                    Console.WriteLine(dt.Rows.Count);
                 }
 
                 cmd = null;
                 conn.Close();
             }
-            Console.WriteLine("returning");
-            return ds;
+            return dt;
         }
+
 
         private void button4_Click(object sender, EventArgs e)
         {
-            ReadExcelFile();
+            reportReadBox.Rows.Clear();
+            DataTable excelData = ReadExcelFile();
+            barProgress.Maximum = excelData.Rows.Count;
+            barProgress.Value = 0;
+            loopCounter = 1;
+            StartTheThread(excelData);
         }
+
+        /// <summary>
+        /// Opens a new thread and connects to device
+        /// </summary>
+        public Thread StartTheThread(DataTable excelData)
+        {
+            var t = new Thread(() => addRow(excelData));
+            t.Start();
+            return t;
+        }
+
+
+
+        private void addRow(DataTable excelData)
+        {
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (reportReadBox.InvokeRequired)
+            {
+                SetDataTableCallback tb = new SetDataTableCallback(addRow);
+                this.Invoke(tb, new object[] { excelData });
+            }
+            else
+            {
+                for (int i = 1; i< 10; i++)
+                {
+                    reportReadBox.Rows.Add(
+                    //Barcode
+                    excelData.Rows[i][0],
+                    //Status
+                    checkDB(excelData.Rows[i][0].ToString()),
+                    //Product Family
+                    excelData.Rows[i][1],
+                    //Lot number
+                    excelData.Rows[i][2],
+                    //Manufacturer
+                    excelData.Rows[i][4],
+                    //Manufacturer Model
+                    excelData.Rows[i][5]
+                    //Started By
+                    //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
+                    );
+                    loopCounter++;
+                    barProgress.Value += 1;
+                    barProgress.Update();
+                    lblBarProgress.Text = barProgress.Value + " / " + barProgress.Maximum;
+                    lblBarProgress.Update();
+                    reportReadBox.Update();
+                }
+                    
+            }
+
+
+
+        }
+
 
         private void exportFile_FileOk(object sender, CancelEventArgs e)
         {
@@ -214,5 +273,7 @@ namespace ToDo
             }
             return dt;
         }
+
+        
     }
 }
