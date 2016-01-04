@@ -95,11 +95,11 @@ namespace ToDo
             return sb.ToString();
         }
 
-        private DataTable ReadExcelFile()
+        private DataTable ReadExcelFile(string location)
         {
             DataTable dt = new DataTable();
 
-            string connectionString = GetConnectionString("C:\\Book1.xlsx");
+            string connectionString = GetConnectionString(location);
 
             using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
@@ -139,12 +139,18 @@ namespace ToDo
 
         private void button4_Click(object sender, EventArgs e)
         {
-            reportReadBox.Rows.Clear();
-            DataTable excelData = ReadExcelFile();
-            barProgress.Maximum = excelData.Rows.Count;
-            barProgress.Value = 0;
-            loopCounter = 1;
-            StartTheThread(excelData);
+            DialogResult result = importFile.ShowDialog();
+            if(result == DialogResult.OK)
+            {
+                string fileName = importFile.FileName;
+                //reportReadBox.Rows.Clear();
+                DataTable excelData = ReadExcelFile(fileName);
+                barProgress.Maximum = excelData.Rows.Count - 1;
+                barProgress.Value = 0;
+                loopCounter = 1;
+                StartTheThread(excelData);
+            }
+            
         }
 
         /// <summary>
@@ -171,7 +177,7 @@ namespace ToDo
             }
             else
             {
-                for (int i = 1; i< 10; i++)
+                for (int i = 1; i< excelData.Rows.Count; i++)
                 {
                     reportReadBox.Rows.Add(
                     //Barcode
@@ -206,20 +212,7 @@ namespace ToDo
 
         private void exportFile_FileOk(object sender, CancelEventArgs e)
         {
-            exportFile.Filter = "Excel File | *.xlsx";
-            DialogResult result = exportFile.ShowDialog();
-            // string [] file = Directory.GetFiles(SSelectedPath);
-            Console.WriteLine(exportFile.FileName);
-            if (exportFile.FileName != "")
-            {
-                //reportExport(exportSave.FileName.ToString());
-                exportFile.FileName = "";
-
-            }
-            else
-            {
-                MessageBox.Show("Please enter a file name");
-            }
+           
 
         }
 
@@ -274,6 +267,27 @@ namespace ToDo
             return dt;
         }
 
-        
+        private void openFileDialog1_FileOk(object sender, CancelEventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            exportFile.Filter = "Excel File | *.xlsx";
+            DialogResult result = exportFile.ShowDialog();
+            //string [] file = Directory.GetFiles(SelectedPath);
+            Console.WriteLine(exportFile.FileName);
+            if (exportFile.FileName != "")
+            {
+                reportExport(exportFile.FileName.ToString());
+                exportFile.FileName = "";
+
+            }
+            else
+            {
+                MessageBox.Show("Please enter a file name");
+            }
+        }
     }
 }

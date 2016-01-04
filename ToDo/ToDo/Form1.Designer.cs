@@ -35,22 +35,23 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.reportReadBox = new System.Windows.Forms.DataGridView();
-            this.button4 = new System.Windows.Forms.Button();
-            this.importFile = new System.Windows.Forms.FolderBrowserDialog();
-            this.exportFile = new System.Windows.Forms.SaveFileDialog();
             this.Barcode = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Family = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Lot = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Make = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Model = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.button4 = new System.Windows.Forms.Button();
+            this.exportFile = new System.Windows.Forms.SaveFileDialog();
             this.barProgress = new System.Windows.Forms.ProgressBar();
             this.lblBarProgress = new System.Windows.Forms.Label();
+            this.importFile = new System.Windows.Forms.OpenFileDialog();
             ((System.ComponentModel.ISupportInitialize)(this.reportReadBox)).BeginInit();
             this.SuspendLayout();
             // 
             // button1
             // 
+            this.button1.Enabled = false;
             this.button1.Location = new System.Drawing.Point(565, 462);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
@@ -61,15 +62,17 @@
             // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(763, 462);
+            this.button2.Location = new System.Drawing.Point(749, 462);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(103, 24);
             this.button2.TabIndex = 1;
             this.button2.Text = "Export to Excel";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // button3
             // 
+            this.button3.Enabled = false;
             this.button3.Location = new System.Drawing.Point(910, 462);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(75, 23);
@@ -79,6 +82,7 @@
             // 
             // reportReadBox
             // 
+            this.reportReadBox.AllowUserToAddRows = false;
             dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
             dataGridViewCellStyle4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -115,21 +119,6 @@
             this.reportReadBox.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
             this.reportReadBox.Size = new System.Drawing.Size(801, 325);
             this.reportReadBox.TabIndex = 3;
-            this.reportReadBox.AllowUserToAddRows = false;
-            // 
-            // button4
-            // 
-            this.button4.Location = new System.Drawing.Point(184, 463);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(75, 23);
-            this.button4.TabIndex = 4;
-            this.button4.Text = "Import File";
-            this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click);
-            // 
-            // exportFile
-            // 
-            this.exportFile.FileOk += new System.ComponentModel.CancelEventHandler(this.exportFile_FileOk);
             // 
             // Barcode
             // 
@@ -160,6 +149,20 @@
             // 
             this.Model.HeaderText = "Mfg Model No.";
             this.Model.Name = "Model";
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(184, 463);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(75, 23);
+            this.button4.TabIndex = 4;
+            this.button4.Text = "Import File";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // exportFile
+            // 
+            this.exportFile.FileOk += new System.ComponentModel.CancelEventHandler(this.exportFile_FileOk);
             // 
             // barProgress
             // 
@@ -203,7 +206,6 @@
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.DataGridView reportReadBox;
         private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.FolderBrowserDialog importFile;
         private System.Windows.Forms.SaveFileDialog exportFile;
         private System.Windows.Forms.DataGridViewTextBoxColumn Barcode;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
@@ -213,6 +215,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Model;
         private System.Windows.Forms.ProgressBar barProgress;
         private System.Windows.Forms.Label lblBarProgress;
+        private System.Windows.Forms.OpenFileDialog importFile;
     }
 }
 
