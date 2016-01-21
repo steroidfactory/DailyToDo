@@ -14,7 +14,7 @@ namespace ToDo
 {
     public partial class Form1 : Form
     {
-        delegate void SetDataTableCallback(DataTable dt);
+        delegate void SetDataTableCallback(DataTable dt, int i);
         int loopCounter = new int();
         Database dbWipedrive = new Database();
         public Form1()
@@ -25,7 +25,7 @@ namespace ToDo
 
         private void button1_Click(object sender, EventArgs e)
         {
-            checkDB("5861292");
+            //checkDB("5861292");
         }
 
 
@@ -156,29 +156,31 @@ namespace ToDo
         /// <summary>
         /// Opens a new thread and connects to device
         /// </summary>
-        public Thread StartTheThread(DataTable excelData)
+        public void StartTheThread(DataTable excelData)
         {
-            var t = new Thread(() => addRow(excelData));
-            t.Start();
-            return t;
+            for (int i = 0; i < excelData.Rows.Count - 2; i++)
+            {
+                var t = new Thread(() => addRow(excelData, i));
+                t.Start();
+            }
         }
 
 
-
-        private void addRow(DataTable excelData)
+        private void addRow(DataTable excelData, int i)
         {
-            // InvokeRequired required compares the thread ID of the
-            // calling thread to the thread ID of the creating thread.
-            // If these threads are different, it returns true.
-            if (reportReadBox.InvokeRequired)
-            {
-                SetDataTableCallback tb = new SetDataTableCallback(addRow);
-                this.Invoke(tb, new object[] { excelData });
-            }
-            else
-            {
-                for (int i = 1; i< excelData.Rows.Count -1; i++)
+            
+                // InvokeRequired required compares the thread ID of the
+                // calling thread to the thread ID of the creating thread.
+                // If these threads are different, it returns true.
+                if (reportReadBox.InvokeRequired)
                 {
+                    SetDataTableCallback tb = new SetDataTableCallback(addRow);
+                    this.Invoke(tb, new object[] { excelData, i });
+                    Console.WriteLine("invoked");
+                }
+                else
+                {
+
                     reportReadBox.Rows.Add(
                     //Barcode
                     excelData.Rows[i][0],
@@ -201,9 +203,10 @@ namespace ToDo
                     lblBarProgress.Text = barProgress.Value + " / " + barProgress.Maximum;
                     lblBarProgress.Update();
                     reportReadBox.Update();
+
+
                 }
-                    
-            }
+            
 
 
 
