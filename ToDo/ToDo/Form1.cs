@@ -145,7 +145,7 @@ namespace ToDo
                 string fileName = importFile.FileName;
                 //reportReadBox.Rows.Clear();
                 DataTable excelData = ReadExcelFile(fileName);
-                barProgress.Maximum = excelData.Rows.Count - 1;
+                barProgress.Maximum = excelData.Rows.Count - 2;
                 barProgress.Value = 0;
                 loopCounter = 1;
                 StartTheThread(excelData);
@@ -177,7 +177,7 @@ namespace ToDo
             }
             else
             {
-                for (int i = 1; i< excelData.Rows.Count; i++)
+                for (int i = 1; i< excelData.Rows.Count -1; i++)
                 {
                     reportReadBox.Rows.Add(
                     //Barcode
