@@ -151,6 +151,59 @@ namespace ToDo
             }
         }
 
+        //Select statement
+        public List<string>[] loadDB()
+        {
+            string query = "SELECT DISTINCT(CustomComputerId), Username, StartTime, EndTime, HardDiskId FROM " + table + " WHERE DATE(StartTime) > date_sub(current_date, interval 2 month)" + ";";
+            //int countNum = Count();
+            //Create a list to store the result
+            List<string>[] list = new List<string>[5];
+            //for (int i = 0; i<=4; i++)
+            //{
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+            list[2] = new List<string>();
+            list[3] = new List<string>();
+            list[4] = new List<string>();
+            //}
+
+            //Open connection
+            if (OpenConnection() == true)
+            {
+
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                // MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list
+                using (MySqlDataReader dataReader = cmd.ExecuteReader())
+                {
+                    while (dataReader.Read())
+                    {
+                        list[0].Add(dataReader["CustomComputerId"] + "");
+                        list[1].Add(dataReader["Username"] + "");
+                        list[2].Add(dataReader["StartTime"] + "");
+                        list[3].Add(dataReader["EndTime"] + "");
+                        list[4].Add(dataReader["HardDiskId"] + "");
+                        //Console.WriteLine(dataReader["Index_ID"].ToString() + dataReader["QT"] + dataReader["OrderNumber"]
+                        //+ dataReader["ID"] + dataReader["TrackingNumber"] + dataReader["TimeIn"] );
+                    }
+                    //close Data Reader
+                    dataReader.Close();
+
+                    //close Connection
+                    CloseConnection();
+                }
+                //return list to be displayed
+                return list;
+            }
+            else
+            {
+                return list;
+            }
+        }
+
         //Count statement
         public int Count(string barcode)
         {
@@ -261,6 +314,7 @@ namespace ToDo
         public List<string>[] selectOperationId(string barcode)
         {
             string query = "SELECT * FROM " + table + " WHERE CustomComputerId=" + "'" + barcode + "'" + ";";
+            
             //int countNum = Count();
             //Create a list to store the result
             List<string>[] list = new List<string>[3];

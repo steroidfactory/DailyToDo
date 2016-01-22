@@ -20,17 +20,23 @@ namespace ToDo
         Database dbWipedrive = new Database();
         DataTable finalTable = new DataTable();
         DataTable original = new DataTable();
+        DataTable dbLog = new DataTable();
         private bool canceled = false;
         public Form1()
         {
             InitializeComponent();
             dbWipedrive.initDB();
             initFinalTable();
+            initDbLog();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            //checkDB("5861292");
+            finalTable.Rows.Clear();
+            reportReadBox.Rows.Clear();
+            barProgress.Value = 0;
+            lblBarProgress.Text = "Starting";
+            StartTheThread();
         }
 
         private void initFinalTable()
@@ -43,6 +49,14 @@ namespace ToDo
             finalTable.Columns.Add("Model", typeof(string));
         }
 
+        private void initDbLog()
+        {
+            dbLog.Columns.Add("CustomComputerId", typeof(string));
+            dbLog.Columns.Add("Username", typeof(string));
+            dbLog.Columns.Add("StartTime", typeof(string));
+            dbLog.Columns.Add("EndTime", typeof(string));
+            dbLog.Columns.Add("HardDiskId", typeof(string));
+        }
 
         private string checkDB(string barcode)
         {
@@ -166,6 +180,7 @@ namespace ToDo
                 buttonStatus(btnImport, false);
                 buttonStatus(btnCancel, true);
                 buttonStatus(btnExport, false);
+                buttonStatus(btnRefresh, false);
                 StartTheThread();
                 
             }
@@ -213,6 +228,7 @@ namespace ToDo
                 buttonStatus(btnImport, true);
                 buttonStatus(btnCancel, false);
                 buttonStatus(btnExport, true);
+                buttonStatus(btnRefresh, true);
             }
             if (canceled == true)
             {
@@ -360,5 +376,26 @@ namespace ToDo
         {
             canceled = true;
         }
+
+        private void button1_Click_1(object sender, EventArgs e)
+        {
+            List<string> db = new List<string>();
+            Console.WriteLine("Loading Database");
+            List<string>[] dbList = dbWipedrive.loadDB();
+            for (int i = 0; i < dbList[0].Count() - 1; i++)
+            {
+                dbLog.Rows.Add(
+                       dbList[0][i],
+                       dbList[1][i],
+                       dbList[2][i],
+                       dbList[3][i],
+                       dbList[4][i]
+                       );
+            }
+            Console.WriteLine(dbLog.Rows.Count);
+
+        }
+
+       
     }
 }
