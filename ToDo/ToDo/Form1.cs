@@ -36,7 +36,9 @@ namespace ToDo
             finalTable.Rows.Clear();
             reportReadBox.Rows.Clear();
             barProgress.Value = 0;
-            lblBarProgress.Text = "Starting";
+            lblBarProgress.Text = "Refreshing";
+            dbLogToTable();
+            dbConfirmationToTable();
             StartTheThread();
         }
 
@@ -48,6 +50,7 @@ namespace ToDo
             finalTable.Columns.Add("Lot", typeof(string));
             finalTable.Columns.Add("Manufacturer", typeof(string));
             finalTable.Columns.Add("Model", typeof(string));
+            finalTable.Columns.Add("Part", typeof(string));
         }
 
         private void initDb()
@@ -190,7 +193,6 @@ namespace ToDo
                 lblBarProgress.Text = "Starting";
                 original = excelData;
                 buttonStatus(btnImport, false);
-                buttonStatus(btnCancel, true);
                 buttonStatus(btnExport, false);
                 buttonStatus(btnRefresh, false);
                 dbLogToTable();
@@ -229,8 +231,9 @@ namespace ToDo
                         //Manufacturer
                         original.Rows[i][4],
                         //Manufacturer Model
-                        original.Rows[i][5]
-                        //Started By
+                        original.Rows[i][5],
+                        
+                        original.Rows[i][3]
                         //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
                         );
                 }
@@ -240,7 +243,6 @@ namespace ToDo
             {
                 addToTable();
                 buttonStatus(btnImport, true);
-                buttonStatus(btnCancel, false);
                 buttonStatus(btnExport, true);
                 buttonStatus(btnRefresh, true);
             }
@@ -248,7 +250,6 @@ namespace ToDo
             {
                 MessageBox.Show("Canceled");
                 buttonStatus(btnImport, true);
-                buttonStatus(btnCancel, false);
                 finalTable.Rows.Clear();
                 canceled = false;
             }
@@ -299,7 +300,7 @@ namespace ToDo
             {
                 foreach (DataRow row in finalTable.Rows)
                 {
-                    reportReadBox.Rows.Add(row.Field<string>(0), row.Field<string>(1), row.Field<string>(2), row.Field<string>(3), row.Field<string>(4), row.Field<string>(5));
+                    reportReadBox.Rows.Add(row.Field<string>(0), row.Field<string>(1), row.Field<string>(2), row.Field<string>(3), row.Field<string>(4), row.Field<string>(5), row.Field<string>(6));
                 }
             }
 
@@ -398,6 +399,7 @@ namespace ToDo
 
         private void dbLogToTable()
         {
+            dbLog.Rows.Clear();
             List<string> db = new List<string>();
             //Console.WriteLine("Loading Database");
             List<string>[] dbList = dbWipedrive.loadDB();
@@ -416,6 +418,7 @@ namespace ToDo
 
         private void dbConfirmationToTable()
         {
+            dbConfirmation.Rows.Clear();
             List<string> db = new List<string>();
             //Console.WriteLine("Loading Database");
             List<string>[] dbList = dbWipedrive.loadConfirmation(dbWipedrive.SelectCount());
