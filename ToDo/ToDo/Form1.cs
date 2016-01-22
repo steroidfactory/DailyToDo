@@ -66,18 +66,24 @@ namespace ToDo
 
         private string checkDB(string barcode)
         {
+            DataRow[] rowLog;
+            rowLog = dbLog.Select("CustomComputerId = " + "'" + barcode + "'");
+
             DateTime timeStart = new DateTime();
             DateTime timeEnd = new DateTime();
             string Name = "";
-            if (dbWipedrive.Count(barcode) > 0)
+            if (rowLog.Count() > 0)
             {
-                timeStart = DateTime.Parse(dbWipedrive.Select(barcode)[1][0]);
-                timeEnd = DateTime.Parse(dbWipedrive.Select(barcode)[2][0]);
+                timeStart = DateTime.Parse(rowLog[0][2].ToString());
+                timeEnd = DateTime.Parse(rowLog[0][3].ToString());
+
+                DataRow[] rowConfirmation;
+                rowConfirmation = dbLog.Select("HardDiskId = " + rowLog[0][4]);
 
                 //Confirmed or awaiting Confirmation
                 if (timeEnd > timeStart)
                 {
-                    Name = dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(barcode)[0][0]);
+                    Name = rowConfirmation[0][1].ToString();
                     if (Name == "")
                     {
                         return "Awaiting Confirmation";
@@ -187,6 +193,8 @@ namespace ToDo
                 buttonStatus(btnCancel, true);
                 buttonStatus(btnExport, false);
                 buttonStatus(btnRefresh, false);
+                dbLogToTable();
+                dbConfirmationToTable();
                 StartTheThread();
                 
             }
@@ -391,7 +399,7 @@ namespace ToDo
         private void dbLogToTable()
         {
             List<string> db = new List<string>();
-            Console.WriteLine("Loading Database");
+            //Console.WriteLine("Loading Database");
             List<string>[] dbList = dbWipedrive.loadDB();
             for (int i = 0; i < dbList[0].Count() - 1; i++)
             {
@@ -403,13 +411,13 @@ namespace ToDo
                        dbList[4][i]
                        );
             }
-            Console.WriteLine(dbLog.Rows.Count);
+            //Console.WriteLine(dbLog.Rows.Count);
         }
 
         private void dbConfirmationToTable()
         {
             List<string> db = new List<string>();
-            Console.WriteLine("Loading Database");
+            //Console.WriteLine("Loading Database");
             List<string>[] dbList = dbWipedrive.loadConfirmation(dbWipedrive.SelectCount());
             for (int i = 0; i < dbList[0].Count() - 1; i++)
             {
@@ -420,7 +428,7 @@ namespace ToDo
                        dbList[3][i]
                        );
             }
-            Console.WriteLine(dbConfirmation.Rows.Count);
+            //Console.WriteLine(dbConfirmation.Rows.Count);
         }
        
     }

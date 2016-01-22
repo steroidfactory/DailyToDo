@@ -35,12 +35,6 @@
             this.btnExport = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.reportReadBox = new System.Windows.Forms.DataGridView();
-            this.Barcode = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Family = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Lot = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Make = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Model = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.btnImport = new System.Windows.Forms.Button();
             this.exportFile = new System.Windows.Forms.SaveFileDialog();
             this.barProgress = new System.Windows.Forms.ProgressBar();
@@ -48,6 +42,13 @@
             this.importFile = new System.Windows.Forms.OpenFileDialog();
             this.btnCancel = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.Barcode = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Status = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Family = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Lot = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Make = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.Model = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.PartNumber = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.reportReadBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -102,7 +103,8 @@
             this.Family,
             this.Lot,
             this.Make,
-            this.Model});
+            this.Model,
+            this.PartNumber});
             dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
             dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -123,36 +125,6 @@
             this.reportReadBox.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
             this.reportReadBox.Size = new System.Drawing.Size(801, 325);
             this.reportReadBox.TabIndex = 3;
-            // 
-            // Barcode
-            // 
-            this.Barcode.HeaderText = "Serial No.";
-            this.Barcode.Name = "Barcode";
-            // 
-            // Status
-            // 
-            this.Status.HeaderText = "Status";
-            this.Status.Name = "Status";
-            // 
-            // Family
-            // 
-            this.Family.HeaderText = "Product Family";
-            this.Family.Name = "Family";
-            // 
-            // Lot
-            // 
-            this.Lot.HeaderText = "Lot No.";
-            this.Lot.Name = "Lot";
-            // 
-            // Make
-            // 
-            this.Make.HeaderText = "Manufacturer";
-            this.Make.Name = "Make";
-            // 
-            // Model
-            // 
-            this.Model.HeaderText = "Mfg Model No.";
-            this.Model.Name = "Model";
             // 
             // btnImport
             // 
@@ -204,6 +176,41 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click_1);
             // 
+            // Barcode
+            // 
+            this.Barcode.HeaderText = "Serial No.";
+            this.Barcode.Name = "Barcode";
+            // 
+            // Status
+            // 
+            this.Status.HeaderText = "Status";
+            this.Status.Name = "Status";
+            // 
+            // Family
+            // 
+            this.Family.HeaderText = "Product Family";
+            this.Family.Name = "Family";
+            // 
+            // Lot
+            // 
+            this.Lot.HeaderText = "Lot No.";
+            this.Lot.Name = "Lot";
+            // 
+            // Make
+            // 
+            this.Make.HeaderText = "Manufacturer";
+            this.Make.Name = "Make";
+            // 
+            // Model
+            // 
+            this.Model.HeaderText = "Mfg Model No.";
+            this.Model.Name = "Model";
+            // 
+            // PartNumber
+            // 
+            this.PartNumber.HeaderText = "Mfg Part No.";
+            this.PartNumber.Name = "PartNumber";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -234,17 +241,18 @@
         private System.Windows.Forms.DataGridView reportReadBox;
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.SaveFileDialog exportFile;
+        private System.Windows.Forms.ProgressBar barProgress;
+        private System.Windows.Forms.Label lblBarProgress;
+        private System.Windows.Forms.OpenFileDialog importFile;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button button1;
         private System.Windows.Forms.DataGridViewTextBoxColumn Barcode;
         private System.Windows.Forms.DataGridViewTextBoxColumn Status;
         private System.Windows.Forms.DataGridViewTextBoxColumn Family;
         private System.Windows.Forms.DataGridViewTextBoxColumn Lot;
         private System.Windows.Forms.DataGridViewTextBoxColumn Make;
         private System.Windows.Forms.DataGridViewTextBoxColumn Model;
-        private System.Windows.Forms.ProgressBar barProgress;
-        private System.Windows.Forms.Label lblBarProgress;
-        private System.Windows.Forms.OpenFileDialog importFile;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.DataGridViewTextBoxColumn PartNumber;
     }
 }
 
