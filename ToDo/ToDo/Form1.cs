@@ -16,9 +16,11 @@ namespace ToDo
     {
         delegate void SetDataTableCallback();
         private delegate void EventHandle();
+        delegate void ButtonStatus(Button btn, bool Status);
         Database dbWipedrive = new Database();
         DataTable finalTable = new DataTable();
         DataTable original = new DataTable();
+        private bool canceled = false;
         public Form1()
         {
             InitializeComponent();
@@ -159,8 +161,13 @@ namespace ToDo
                 finalTable.Rows.Clear();
                 barProgress.Maximum = excelData.Rows.Count - 2;
                 barProgress.Value = 0;
+                lblBarProgress.Text = "Starting";
                 original = excelData;
+                buttonStatus(btnImport, false);
+                buttonStatus(btnCancel, true);
+                buttonStatus(btnExport, false);
                 StartTheThread();
+                
             }
             
         }
@@ -177,30 +184,46 @@ namespace ToDo
 
         private void addRow()
         {
-           
-
             for (int i = 1; i < original.Rows.Count - 1; i++)
             {
-                finalTable.Rows.Add(
-                    //Barcode
-                    original.Rows[i][0],
-                    //Status
-                    checkDB(original.Rows[i][0].ToString()),
-                    //Product Family
-                    original.Rows[i][1],
-                    //Lot number
-                    original.Rows[i][2],
-                    //Manufacturer
-                    original.Rows[i][4],
-                    //Manufacturer Model
-                    original.Rows[i][5]
-                    //Started By
-                    //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
-                    );
+                if (canceled == false)
+                {
+                    finalTable.Rows.Add(
+                        //Barcode
+                        original.Rows[i][0],
+                        //Status
+                        checkDB(original.Rows[i][0].ToString()),
+                        //Product Family
+                        original.Rows[i][1],
+                        //Lot number
+                        original.Rows[i][2],
+                        //Manufacturer
+                        original.Rows[i][4],
+                        //Manufacturer Model
+                        original.Rows[i][5]
+                        //Started By
+                        //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
+                        );
+                }
                 updateProgress();
             }
-            addToTable();
+            if (canceled == false)
+            {
+                addToTable();
+                buttonStatus(btnImport, true);
+                buttonStatus(btnCancel, false);
+                buttonStatus(btnExport, true);
+            }
+            if (canceled == true)
+            {
+                MessageBox.Show("Canceled");
+                buttonStatus(btnImport, true);
+                buttonStatus(btnCancel, false);
+                finalTable.Rows.Clear();
+                canceled = false;
+            }
 
+           
 
 
         }
@@ -215,6 +238,19 @@ namespace ToDo
             {
                 barProgress.Value++;
                 lblBarProgress.Text = barProgress.Value + " / " + barProgress.Maximum;
+            }
+        }
+
+        private void buttonStatus(Button btn, bool Enabled)
+        {
+            if (btn.InvokeRequired)
+            {
+                ButtonStatus status = new ButtonStatus(buttonStatus);
+                btn.Invoke(status, new object[] { btn, Enabled});
+            }
+            else
+            {
+                btn.Enabled = Enabled;
             }
         }
 
@@ -318,6 +354,11 @@ namespace ToDo
             {
                 MessageBox.Show("Please enter a file name");
             }
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            canceled = true;
         }
     }
 }
