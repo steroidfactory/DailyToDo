@@ -21,13 +21,14 @@ namespace ToDo
         DataTable finalTable = new DataTable();
         DataTable original = new DataTable();
         DataTable dbLog = new DataTable();
+        DataTable dbConfirmation = new DataTable();
         private bool canceled = false;
         public Form1()
         {
             InitializeComponent();
             dbWipedrive.initDB();
             initFinalTable();
-            initDbLog();
+            initDb();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -49,13 +50,18 @@ namespace ToDo
             finalTable.Columns.Add("Model", typeof(string));
         }
 
-        private void initDbLog()
+        private void initDb()
         {
             dbLog.Columns.Add("CustomComputerId", typeof(string));
             dbLog.Columns.Add("Username", typeof(string));
             dbLog.Columns.Add("StartTime", typeof(string));
             dbLog.Columns.Add("EndTime", typeof(string));
             dbLog.Columns.Add("HardDiskId", typeof(string));
+
+            dbConfirmation.Columns.Add("DiskOperationLogId", typeof(string));
+            dbConfirmation.Columns.Add("User1", typeof(string));
+            dbConfirmation.Columns.Add("UserName1", typeof(string));
+            dbConfirmation.Columns.Add("User2", typeof(string));
         }
 
         private string checkDB(string barcode)
@@ -379,6 +385,11 @@ namespace ToDo
 
         private void button1_Click_1(object sender, EventArgs e)
         {
+            
+        }
+
+        private void dbLogToTable()
+        {
             List<string> db = new List<string>();
             Console.WriteLine("Loading Database");
             List<string>[] dbList = dbWipedrive.loadDB();
@@ -393,9 +404,24 @@ namespace ToDo
                        );
             }
             Console.WriteLine(dbLog.Rows.Count);
-
         }
 
+        private void dbConfirmationToTable()
+        {
+            List<string> db = new List<string>();
+            Console.WriteLine("Loading Database");
+            List<string>[] dbList = dbWipedrive.loadConfirmation(dbWipedrive.SelectCount());
+            for (int i = 0; i < dbList[0].Count() - 1; i++)
+            {
+                dbConfirmation.Rows.Add(
+                       dbList[0][i],
+                       dbList[1][i],
+                       dbList[2][i],
+                       dbList[3][i]
+                       );
+            }
+            Console.WriteLine(dbConfirmation.Rows.Count);
+        }
        
     }
 }
