@@ -14,13 +14,16 @@ namespace ToDo
 {
     public partial class Form1 : Form
     {
-        delegate void SetDataTableCallback(DataTable dt, int i);
-        int loopCounter = new int();
+        delegate void SetDataTableCallback();
+        private delegate void EventHandle();
         Database dbWipedrive = new Database();
+        DataTable finalTable = new DataTable();
+        DataTable original = new DataTable();
         public Form1()
         {
             InitializeComponent();
             dbWipedrive.initDB();
+            initFinalTable();
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -28,7 +31,15 @@ namespace ToDo
             //checkDB("5861292");
         }
 
-
+        private void initFinalTable()
+        {
+            finalTable.Columns.Add("Serial", typeof(string));
+            finalTable.Columns.Add("Status", typeof(string));
+            finalTable.Columns.Add("Family", typeof(string));
+            finalTable.Columns.Add("Lot", typeof(string));
+            finalTable.Columns.Add("Manufacturer", typeof(string));
+            finalTable.Columns.Add("Model", typeof(string));
+        }
 
 
         private string checkDB(string barcode)
@@ -145,10 +156,11 @@ namespace ToDo
                 string fileName = importFile.FileName;
                 //reportReadBox.Rows.Clear();
                 DataTable excelData = ReadExcelFile(fileName);
+                finalTable.Rows.Clear();
                 barProgress.Maximum = excelData.Rows.Count - 2;
                 barProgress.Value = 0;
-                loopCounter = 1;
-                StartTheThread(excelData);
+                original = excelData;
+                StartTheThread();
             }
             
         }
@@ -156,59 +168,74 @@ namespace ToDo
         /// <summary>
         /// Opens a new thread and connects to device
         /// </summary>
-        public void StartTheThread(DataTable excelData)
+        public void StartTheThread()
         {
-            for (int i = 0; i < excelData.Rows.Count - 2; i++)
-            {
-                var t = new Thread(() => addRow(excelData, i));
+                var t = new Thread(() => addRow());
                 t.Start();
-            }
         }
 
 
-        private void addRow(DataTable excelData, int i)
+        private void addRow()
         {
-            
-                // InvokeRequired required compares the thread ID of the
-                // calling thread to the thread ID of the creating thread.
-                // If these threads are different, it returns true.
-                if (reportReadBox.InvokeRequired)
-                {
-                    SetDataTableCallback tb = new SetDataTableCallback(addRow);
-                    this.Invoke(tb, new object[] { excelData, i });
-                    Console.WriteLine("invoked");
-                }
-                else
-                {
+           
 
-                    reportReadBox.Rows.Add(
+            for (int i = 1; i < original.Rows.Count - 1; i++)
+            {
+                finalTable.Rows.Add(
                     //Barcode
-                    excelData.Rows[i][0],
+                    original.Rows[i][0],
                     //Status
-                    checkDB(excelData.Rows[i][0].ToString()),
+                    checkDB(original.Rows[i][0].ToString()),
                     //Product Family
-                    excelData.Rows[i][1],
+                    original.Rows[i][1],
                     //Lot number
-                    excelData.Rows[i][2],
+                    original.Rows[i][2],
                     //Manufacturer
-                    excelData.Rows[i][4],
+                    original.Rows[i][4],
                     //Manufacturer Model
-                    excelData.Rows[i][5]
+                    original.Rows[i][5]
                     //Started By
                     //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
                     );
-                    loopCounter++;
-                    barProgress.Value += 1;
-                    barProgress.Update();
-                    lblBarProgress.Text = barProgress.Value + " / " + barProgress.Maximum;
-                    lblBarProgress.Update();
-                    reportReadBox.Update();
+                updateProgress();
+            }
+            addToTable();
 
 
+
+        }
+
+        private void updateProgress()
+        {
+            if (barProgress.InvokeRequired)
+            {
+                barProgress.Invoke(new Action(updateProgress));
+            }
+            else
+            {
+                barProgress.Value++;
+                lblBarProgress.Text = barProgress.Value + " / " + barProgress.Maximum;
+            }
+        }
+
+        private void addToTable()
+        {
+
+            // InvokeRequired required compares the thread ID of the
+            // calling thread to the thread ID of the creating thread.
+            // If these threads are different, it returns true.
+            if (reportReadBox.InvokeRequired)
+            {
+                SetDataTableCallback tb = new SetDataTableCallback(addToTable);
+                this.Invoke(tb, new object[] { });
+            }
+            else
+            {
+                foreach (DataRow row in finalTable.Rows)
+                {
+                    reportReadBox.Rows.Add(row.Field<string>(0), row.Field<string>(1), row.Field<string>(2), row.Field<string>(3), row.Field<string>(4), row.Field<string>(5));
                 }
-            
-
-
+            }
 
         }
 
