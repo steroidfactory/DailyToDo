@@ -105,7 +105,7 @@ namespace ToDo
         public List<string>[] Select(string barcode)
         {
 
-            string query = "SELECT * FROM " + table + " WHERE CustomComputerId=" + "'" +barcode + "'" + ";";
+            string query = "SELECT * FROM " + table + " WHERE CustomComputerId=" + "'" +barcode + "'" + " ORDER BY EndTime DESC" + ";";
             //int countNum = Count();
             //Create a list to store the result
             List<string>[] list = new List<string>[3];
@@ -200,7 +200,8 @@ namespace ToDo
         //Select statement
         public List<string>[] loadDB()
         {
-            string query = "SELECT DISTINCT(CustomComputerId), Username, StartTime, EndTime, HardDiskId FROM " + table + " WHERE DATE(StartTime) > date_sub(current_date, interval 2 month)" + ";";
+            string query = "SELECT CustomComputerId, Username, StartTime, EndTime, HardDiskId FROM " +
+                "(SELECT CustomComputerId, Username, StartTime, EndTime, HardDiskId FROM " + table + " WHERE DATE(StartTime) > date_sub(current_date, interval 2 month) ORDER BY EndTime DESC) tmp GROUP BY CustomComputerId" + ";";
             //int countNum = Count();
             //Create a list to store the result
             List<string>[] list = new List<string>[5];
