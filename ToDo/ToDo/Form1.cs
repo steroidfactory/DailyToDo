@@ -81,8 +81,7 @@ namespace ToDo
                 timeEnd = DateTime.Parse(rowLog[0][3].ToString());
 
                 DataRow[] rowConfirmation;
-                rowConfirmation = dbLog.Select("HardDiskId = " + rowLog[0][4]);
-
+                rowConfirmation = dbLog.Select("HardDiskId = " + "'" + rowLog[0][4] + "'");
                 //Confirmed or awaiting Confirmation
                 if (timeEnd > timeStart)
                 {
@@ -146,6 +145,7 @@ namespace ToDo
             using (OleDbConnection conn = new OleDbConnection(connectionString))
             {
                 conn.Open();
+                
                 OleDbCommand cmd = new OleDbCommand();
                 cmd.Connection = conn;
 
@@ -215,25 +215,51 @@ namespace ToDo
 
         private void addRow()
         {
+            int columnSerialNumber = new int();
+            int columnProductFamily = new int();
+            int columnLotNumber = new int();
+            int columnManufacturer = new int();
+            int columnManufacturerModel = new int();
+            int columnManufacturerPartNumber = new int();
+            Console.WriteLine(columnManufacturer);
+            for (int i = 0; i < original.Columns.Count; i++)
+            {
+                switch (original.Rows[0].Field<string>(i))
+                {
+                    case "Serial No.":
+                        columnSerialNumber = i;
+                        break;
+                    case "Product Family":
+                        columnProductFamily = i;
+                        break;
+                    case "Lot No.":
+                        columnLotNumber = i;
+                        break;
+                    case "Mfg Part No.":
+                        columnManufacturerPartNumber = i;
+                        break;
+                    case "Manufacturer":
+                        columnManufacturer = i;
+                        break;
+                    case "Mfg Model No.":
+                        columnManufacturerModel = i;
+                        break;
+                }
+            }
+
             for (int i = 1; i < original.Rows.Count - 1; i++)
             {
                 if (canceled == false)
                 {
                     finalTable.Rows.Add(
-                        //Barcode
-                        original.Rows[i][0],
+                        original.Rows[i][columnSerialNumber],
                         //Status
                         checkDB(original.Rows[i][0].ToString()),
-                        //Product Family
-                        original.Rows[i][1],
-                        //Lot number
-                        original.Rows[i][2],
-                        //Manufacturer
-                        original.Rows[i][4],
-                        //Manufacturer Model
-                        original.Rows[i][5],
-                        
-                        original.Rows[i][3]
+                        original.Rows[i][columnProductFamily],
+                        original.Rows[i][columnLotNumber],
+                        original.Rows[i][columnManufacturer],
+                        original.Rows[i][columnManufacturerModel],
+                        original.Rows[i][columnManufacturerPartNumber]
                         //dbWipedrive.SelectConfirmedBy(dbWipedrive.selectOperationId(excelData.Rows[i][0].ToString())[0][0])
                         );
                 }
@@ -433,6 +459,10 @@ namespace ToDo
             }
             //Console.WriteLine(dbConfirmation.Rows.Count);
         }
-       
+
+        private void button1_Click_2(object sender, EventArgs e)
+        {
+            
+        }
     }
 }

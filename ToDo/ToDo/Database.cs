@@ -104,6 +104,7 @@ namespace ToDo
         //Select statement
         public List<string>[] Select(string barcode)
         {
+
             string query = "SELECT * FROM " + table + " WHERE CustomComputerId=" + "'" +barcode + "'" + ";";
             //int countNum = Count();
             //Create a list to store the result
@@ -114,7 +115,6 @@ namespace ToDo
             list[1] = new List<string>();
             list[2] = new List<string>();
             //}
-
             //Open connection
             if (OpenConnection() == true)
             {
