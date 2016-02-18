@@ -16,7 +16,7 @@ namespace ToDo
         private string password;
         private string table;
         private string tableConfirmedBy;
-
+        private string connectionSTR;
 
 
         public void initDB()
@@ -37,6 +37,7 @@ namespace ToDo
             connectionString = "SERVER=" + server + ";" + "DATABASE=" +
             database + ";" + "UID=" + uid + ";" + "PASSWORD=" + password + ";" + "Convert Zero Datetime=True;";
             connection = new MySqlConnection(connectionString);
+            connectionSTR = connectionString;
             table= "diskoperationlog";
             tableConfirmedBy = "customfields";
 
@@ -215,11 +216,11 @@ namespace ToDo
             //}
 
             //Open connection
-            if (OpenConnection() == true)
+            using (MySqlConnection con = new MySqlConnection(connectionSTR))
             {
-
+                con.Open();
                 //Create Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 //Create a data reader and Execute the command
                 // MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -240,13 +241,9 @@ namespace ToDo
                     dataReader.Close();
 
                     //close Connection
-                    CloseConnection();
+                    con.Close();
                 }
                 //return list to be displayed
-                return list;
-            }
-            else
-            {
                 return list;
             }
         }
@@ -267,11 +264,11 @@ namespace ToDo
             //}
 
             //Open connection
-            if (OpenConnection() == true)
+            using (MySqlConnection con = new MySqlConnection(connectionSTR))
             {
-
+                con.Open();
                 //Create Command
-                MySqlCommand cmd = new MySqlCommand(query, connection);
+                MySqlCommand cmd = new MySqlCommand(query, con);
                 //Create a data reader and Execute the command
                 // MySqlDataReader dataReader = cmd.ExecuteReader();
 
@@ -292,15 +289,13 @@ namespace ToDo
                     dataReader.Close();
 
                     //close Connection
-                    CloseConnection();
+                    con.Close();
                 }
+
                 //return list to be displayed
                 return list;
             }
-            else
-            {
-                return list;
-            }
+            
         }
 
         //Count statement

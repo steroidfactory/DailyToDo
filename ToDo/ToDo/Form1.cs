@@ -254,7 +254,7 @@ namespace ToDo
                     finalTable.Rows.Add(
                         original.Rows[i][columnSerialNumber],
                         //Status
-                        checkDB(original.Rows[i][0].ToString()),
+                        checkDB(original.Rows[i][columnSerialNumber].ToString()),
                         original.Rows[i][columnProductFamily],
                         original.Rows[i][columnLotNumber],
                         original.Rows[i][columnManufacturer],
